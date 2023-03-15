@@ -1,8 +1,10 @@
 import { CurrencyRupee } from "@mui/icons-material";
 import {
+  Avatar,
   Button,
   List,
   ListItem,
+  ListItemAvatar,
   ListItemText,
   Stack,
   TextField,
@@ -66,6 +68,12 @@ export const ProductList = ({ products, setProducts, onBuy }: Props) => {
         {products?.map((product) =>
           product.amountAvailable > 0 ? (
             <ListItem key={product.id}>
+              <ListItemAvatar>
+                <Avatar
+                  alt={`productImage-${product.id}`}
+                  src={product.productImage}
+                />
+              </ListItemAvatar>
               <ListItemText
                 sx={{ width: { md: "300px", xs: "80px" } }}
                 primary={

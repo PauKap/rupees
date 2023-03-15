@@ -5,6 +5,8 @@ import {
   Stack,
   TextField,
   Typography,
+  InputLabel,
+  Avatar,
 } from "@mui/material";
 import { AxiosError } from "axios";
 import { Product } from "database";
@@ -47,7 +49,7 @@ export const AddProductForm = ({ onAdd }: Props) => {
         <FormControl>
           <TextField
             label="amount available"
-            value={newProduct?.amountAvailable}
+            value={newProduct?.amountAvailable ?? ""}
             onChange={(event) => {
               setNewProduct((current) => ({
                 ...current,
@@ -71,6 +73,24 @@ export const AddProductForm = ({ onAdd }: Props) => {
             type="text"
           />
         </FormControl>
+
+        <FormControl>
+          <TextField
+            onChange={async (event) => {
+              const file = (event.target as HTMLInputElement).files![0];
+              const productImage = URL.createObjectURL(file);
+              setNewProduct((current) => ({
+                ...current,
+                productImage,
+              }));
+            }}
+            label="product image"
+            type="file"
+            inputProps={{ accept: "image/*" }}
+            InputLabelProps={{ shrink: true }}
+          />
+        </FormControl>
+        {newProduct?.productImage && <img src={newProduct.productImage} />}
 
         <Button
           onClick={async () => {
