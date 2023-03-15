@@ -113,7 +113,6 @@ export const AddProductForm = ({ onAdd }: Props) => {
             />
           </LocalizationProvider>
         </FormControl>
-        {JSON.stringify(newProduct?.expireDate)}
         <FormControl>
           <TextField
             key={productImageKey}
@@ -141,7 +140,9 @@ export const AddProductForm = ({ onAdd }: Props) => {
           onClick={async () => {
             try {
               await apiClient.post<BuyResult>("/products", newProduct);
-              setNewProduct(undefined);
+              setNewProduct({
+                expireDate: dayjs().add(7, "day").toISOString(),
+              });
               setProductImageKey(Math.random());
               setError(undefined);
               onAdd();
