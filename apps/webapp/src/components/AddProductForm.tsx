@@ -5,8 +5,6 @@ import {
   Stack,
   TextField,
   Typography,
-  InputLabel,
-  Avatar,
 } from "@mui/material";
 import { AxiosError } from "axios";
 import { Product } from "database";
@@ -22,32 +20,30 @@ type Props = {
 
 export const AddProductForm = ({ onAdd }: Props) => {
   const [newProduct, setNewProduct] = React.useState<Partial<Product>>();
+  const [productImageKey, setProductImageKey] = React.useState<React.Key>();
 
   const [error, setError] = React.useState<AxiosError>();
 
-  const convertBase64 = (file: File) => {
-    return new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-      fileReader.readAsDataURL(file);
-      fileReader.onload = () => {
-        resolve(fileReader.result);
+  const fileToBase64 = (file: File | Blob): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        resolve(reader.result as string);
       };
-      fileReader.onerror = () => {
-        reject(error);
-      };
+
+      reader.readAsDataURL(file);
+      reader.onerror = reject;
     });
-  };
 
   return (
     <Box sx={{ width: "300px" }}>
       <Typography mb={5} textAlign="center" variant="h4">
         add product
       </Typography>
-
       <Stack gap={4}>
         <TextField
           label="cost"
-          value={newProduct?.cost ? newProduct?.cost / 100 : undefined}
+          value={newProduct?.cost ? newProduct?.cost / 100 : ""}
           onChange={(e) => {
             setNewProduct((current) => ({
               ...current,
@@ -76,6 +72,7 @@ export const AddProductForm = ({ onAdd }: Props) => {
 
         <FormControl>
           <TextField
+            value={newProduct?.productName ?? ""}
             label="product name"
             onChange={(event) => {
               setNewProduct((current) => ({
@@ -89,15 +86,16 @@ export const AddProductForm = ({ onAdd }: Props) => {
 
         <FormControl>
           <TextField
+            key={productImageKey}
             onChange={async (event) => {
               const file = (event.target as HTMLInputElement).files![0];
               if (file.size > 500000) {
                 alert("product image is too big");
               } else {
-                const productImage = await convertBase64(file);
+                const productImage = await fileToBase64(file);
                 setNewProduct((current) => ({
                   ...current,
-                  productImage,
+                  productImage: productImage,
                 }));
               }
             }}
@@ -113,6 +111,8 @@ export const AddProductForm = ({ onAdd }: Props) => {
           onClick={async () => {
             try {
               await apiClient.post<BuyResult>("/products", newProduct);
+              setNewProduct(undefined);
+              setProductImageKey(Math.random());
               onAdd();
             } catch (e) {
               setError(e as AxiosError);
