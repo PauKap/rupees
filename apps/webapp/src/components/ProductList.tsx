@@ -18,6 +18,7 @@ import { ROLE } from "@constants";
 import { BuyResult } from "@types";
 import { apiClient } from "@api";
 import { ShowErrors, UserContext } from "@components";
+import dayjs from "dayjs";
 
 type Props = {
   products: Product[];
@@ -67,7 +68,10 @@ export const ProductList = ({ products, setProducts, onBuy }: Props) => {
       >
         {products?.map((product) =>
           product.amountAvailable > 0 ? (
-            <ListItem key={product.id}>
+            <ListItem
+              key={product.id}
+              disabled={dayjs(product?.expireDate)?.isBefore(dayjs())}
+            >
               <ListItemAvatar>
                 <Avatar
                   alt={`productImage-${product.id}`}
@@ -82,6 +86,15 @@ export const ProductList = ({ products, setProducts, onBuy }: Props) => {
                       {product.productName}
                       <Typography ml={1} fontSize={15} component="span">
                         ({product.amountAvailable})
+                      </Typography>
+
+                      <Typography component="span">
+                        {" "}
+                        -{" "}
+                        {dayjs(product.expireDate).isBefore(dayjs())
+                          ? "Expired"
+                          : "Expire"}{" "}
+                        at {dayjs(product.expireDate).format("L LT")}
                       </Typography>
                     </Typography>
                     <Typography
@@ -114,6 +127,7 @@ export const ProductList = ({ products, setProducts, onBuy }: Props) => {
                         max: product.amountAvailable,
                       },
                     }}
+                    disabled={dayjs(product?.expireDate)?.isBefore(dayjs())}
                   />
                   <Button
                     onClick={async () => {
@@ -130,6 +144,7 @@ export const ProductList = ({ products, setProducts, onBuy }: Props) => {
                     variant="contained"
                     color="secondary"
                     size="large"
+                    disabled={dayjs(product?.expireDate)?.isBefore(dayjs())}
                   >
                     buy
                   </Button>

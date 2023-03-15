@@ -1,4 +1,5 @@
 import {
+  IsDateString,
   IsInt,
   IsString,
   Max,
@@ -25,4 +26,7 @@ export class CreateProductDto {
 
   @IsString()
   public productImage: string;
+
+  @IsDateString()
+  public expireDate: Date;
 }
