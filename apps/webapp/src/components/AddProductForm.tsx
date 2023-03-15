@@ -22,10 +22,15 @@ import dayjs from "dayjs";
 
 type Props = {
   onAdd: () => {};
+  setSelectedProduct: (_data: Product | undefined) => void;
   selectedProduct: Product | undefined;
 };
 
-export const AddProductForm = ({ onAdd, selectedProduct }: Props) => {
+export const AddProductForm = ({
+  onAdd,
+  selectedProduct,
+  setSelectedProduct,
+}: Props) => {
   React.useEffect(() => {
     setNewProduct({
       ...selectedProduct,
@@ -152,6 +157,7 @@ export const AddProductForm = ({ onAdd, selectedProduct }: Props) => {
                   setNewProduct({
                     expireDate: dayjs().add(7, "day").toISOString(),
                   });
+                  setSelectedProduct(undefined);
                   setProductImageKey(Math.random());
                   setError(undefined);
                   onAdd();
@@ -186,6 +192,7 @@ export const AddProductForm = ({ onAdd, selectedProduct }: Props) => {
                   setNewProduct({
                     expireDate: dayjs().add(7, "day").toISOString(),
                   });
+                  setSelectedProduct(undefined);
                   setProductImageKey(Math.random());
                   setError(undefined);
                   onAdd();

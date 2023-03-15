@@ -37,6 +37,7 @@ const Products = () => {
                   setProducts((await apiClient.get("/products")).data);
                 }}
                 selectedProduct={selectedProduct}
+                setSelectedProduct={setSelectedProduct}
               />
             </Box>
           </Grid>
