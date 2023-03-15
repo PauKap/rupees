@@ -25,6 +25,19 @@ export const AddProductForm = ({ onAdd }: Props) => {
 
   const [error, setError] = React.useState<AxiosError>();
 
+  const convertBase64 = (file: File) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+      fileReader.onerror = () => {
+        reject(error);
+      };
+    });
+  };
+
   return (
     <Box sx={{ width: "300px" }}>
       <Typography mb={5} textAlign="center" variant="h4">
@@ -78,11 +91,15 @@ export const AddProductForm = ({ onAdd }: Props) => {
           <TextField
             onChange={async (event) => {
               const file = (event.target as HTMLInputElement).files![0];
-              const productImage = URL.createObjectURL(file);
-              setNewProduct((current) => ({
-                ...current,
-                productImage,
-              }));
+              if (file.size > 500000) {
+                alert("product image is too big");
+              } else {
+                const productImage = await convertBase64(file);
+                setNewProduct((current) => ({
+                  ...current,
+                  productImage,
+                }));
+              }
             }}
             label="product image"
             type="file"

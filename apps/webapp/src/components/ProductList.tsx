@@ -71,7 +71,7 @@ export const ProductList = ({ products, setProducts, onBuy }: Props) => {
               <ListItemAvatar>
                 <Avatar
                   alt={`productImage-${product.id}`}
-                  src={product.productImage}
+                  src={product?.productImage}
                 />
               </ListItemAvatar>
               <ListItemText

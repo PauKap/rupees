@@ -3,6 +3,7 @@ import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import * as session from "express-session";
 import * as passport from "passport";
+import { urlencoded, json } from "express";
 
 import { AppModule } from "./app.module";
 import { loginSecret } from "./auth/constants";
@@ -28,6 +29,8 @@ async function bootstrap() {
   app.use(passport.initialize());
   app.use(passport.session());
   app.useGlobalPipes(new ValidationPipe());
+
+  app.use(json({ limit: "50mb" }));
 
   const config = new DocumentBuilder()
     .setTitle("PEPSI Machine")
