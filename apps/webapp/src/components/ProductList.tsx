@@ -24,9 +24,15 @@ type Props = {
   products: Product[];
   setProducts: (_data: Product[]) => void;
   onBuy: (_buyResylt: BuyResult) => void;
+  setSelectedProduct: (_data: Product) => void;
 };
 
-export const ProductList = ({ products, setProducts, onBuy }: Props) => {
+export const ProductList = ({
+  products,
+  setProducts,
+  onBuy,
+  setSelectedProduct,
+}: Props) => {
   const [error, setError] = useState<AxiosError>();
   useEffect(() => {
     (async () => {
@@ -70,7 +76,7 @@ export const ProductList = ({ products, setProducts, onBuy }: Props) => {
           product.amountAvailable > 0 ? (
             <ListItem
               key={product.id}
-              disabled={dayjs(product?.expireDate)?.isBefore(dayjs())}
+              // disabled={dayjs(product?.expireDate)?.isBefore(dayjs())}
             >
               <ListItemAvatar>
                 <Avatar
@@ -110,6 +116,21 @@ export const ProductList = ({ products, setProducts, onBuy }: Props) => {
                 }
                 secondary={<span></span>}
               />
+
+              {user?.role === ROLE.SELLER && product.sellerId === user?.id && (
+                <>
+                  <Button
+                    onClick={() => {
+                      setSelectedProduct(product);
+                    }}
+                    variant="contained"
+                    color="secondary"
+                    size="small"
+                  >
+                    edit
+                  </Button>
+                </>
+              )}
 
               {user?.role === ROLE.BUYER && (
                 <>

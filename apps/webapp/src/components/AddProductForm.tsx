@@ -9,6 +9,7 @@ import {
 import { AxiosError } from "axios";
 import { Product } from "database";
 import * as React from "react";
+import Grid from "@mui/material/Grid"; // Grid version 1
 
 import { BuyResult } from "@types";
 import { apiClient } from "@api";
@@ -21,9 +22,16 @@ import dayjs from "dayjs";
 
 type Props = {
   onAdd: () => {};
+  selectedProduct: Product | undefined;
 };
 
-export const AddProductForm = ({ onAdd }: Props) => {
+export const AddProductForm = ({ onAdd, selectedProduct }: Props) => {
+  React.useEffect(() => {
+    setNewProduct({
+      ...selectedProduct,
+    });
+  }, [selectedProduct]);
+
   const [newProduct, setNewProduct] = React.useState<Partial<Product>>({
     expireDate: dayjs().add(7, "day").toISOString(),
   });
@@ -136,24 +144,62 @@ export const AddProductForm = ({ onAdd }: Props) => {
         </FormControl>
         {newProduct?.productImage && <img src={newProduct.productImage} />}
 
-        <Button
-          onClick={async () => {
-            try {
-              await apiClient.post<BuyResult>("/products", newProduct);
-              setNewProduct({
-                expireDate: dayjs().add(7, "day").toISOString(),
-              });
-              setProductImageKey(Math.random());
-              setError(undefined);
-              onAdd();
-            } catch (e) {
-              setError(e as AxiosError);
-            }
-          }}
-          variant="outlined"
-        >
-          submit
-        </Button>
+        <Grid container>
+          <Grid item xs={6}>
+            <Button
+              onClick={async () => {
+                try {
+                  setNewProduct({
+                    expireDate: dayjs().add(7, "day").toISOString(),
+                  });
+                  setProductImageKey(Math.random());
+                  setError(undefined);
+                  onAdd();
+                } catch (e) {
+                  setError(e as AxiosError);
+                }
+              }}
+              variant="outlined"
+              fullWidth
+            >
+              cancel
+            </Button>
+          </Grid>
+          <Grid item xs={6}>
+            <Button
+              onClick={async () => {
+                try {
+                  if (selectedProduct) {
+                    await apiClient.put<BuyResult>(
+                      `/products/${selectedProduct.id}`,
+                      {
+                        ...newProduct,
+                        productImage:
+                          newProduct?.productImage ||
+                          selectedProduct.productImage,
+                      } as Product
+                    );
+                  } else {
+                    await apiClient.post<BuyResult>("/products", newProduct);
+                  }
+
+                  setNewProduct({
+                    expireDate: dayjs().add(7, "day").toISOString(),
+                  });
+                  setProductImageKey(Math.random());
+                  setError(undefined);
+                  onAdd();
+                } catch (e) {
+                  setError(e as AxiosError);
+                }
+              }}
+              variant="contained"
+              fullWidth
+            >
+              {selectedProduct ? "edit" : "submit"}
+            </Button>
+          </Grid>
+        </Grid>
       </Stack>
       <ShowErrors error={error as AxiosError} />
     </Box>

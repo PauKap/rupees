@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Req,
   UseGuards,
 } from "@nestjs/common";
@@ -15,6 +16,7 @@ import { RoleGuard } from "src/users/roles.guard";
 
 import { LoggedInGuard } from "../auth/logged-in.guard";
 import { CreateProductDto } from "./dto/create-product.dto";
+import { UpdateProductDto } from "./dto/update-product.dto";
 import { ProductsService } from "./products.service";
 
 type RequestWithUser = Request & { user: User };
@@ -31,6 +33,16 @@ export class ProductsController {
     @Req() request: RequestWithUser
   ) {
     return this.productsService.create(createProductDto, request.user);
+  }
+
+  @Put(":id")
+  @UseGuards(LoggedInGuard, RoleGuard)
+  @Roles(ROLE.SELLER)
+  update(
+    @Body() updateProductDto: UpdateProductDto,
+    @Req() request: RequestWithUser
+  ) {
+    return this.productsService.update(updateProductDto, request.user);
   }
 
   @Get()

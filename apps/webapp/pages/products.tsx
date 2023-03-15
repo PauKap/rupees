@@ -15,6 +15,7 @@ import { BuyResult } from "@types";
 
 const Products = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<Product>();
   const [showResult, setShowResult] = useState(false);
   const [buyResult, setBuyResult] = useState<BuyResult>();
   const { user, setUser } = useContext(UserContext);
@@ -35,6 +36,7 @@ const Products = () => {
                 onAdd={async () => {
                   setProducts((await apiClient.get("/products")).data);
                 }}
+                selectedProduct={selectedProduct}
               />
             </Box>
           </Grid>
@@ -50,6 +52,7 @@ const Products = () => {
               }}
               products={products}
               setProducts={setProducts}
+              setSelectedProduct={setSelectedProduct}
             />
           </Box>
         </Grid>
